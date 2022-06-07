@@ -17,4 +17,3 @@ class Category(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     deleted_at = models.DateField(null=True, blank=True)
-    tree = TreeManager()
