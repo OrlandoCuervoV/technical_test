@@ -13,6 +13,7 @@ class LoginSerializer(serializers.Serializer):
         return authenticate(self.context['request'], **kwargs)
 
     def _validate_password(self, password):
+        '''validate password'''
         if len(password) < 8 or len(password) > 16:
             msg = ('The password must be between 8 and 16 characters.')
             raise exceptions.ValidationError(msg)
@@ -34,6 +35,7 @@ class LoginSerializer(serializers.Serializer):
         return user
 
     def validate(self, attrs):
+        '''Check if the user is active'''
         email = attrs.get('email')
         password = attrs.get('password')
 
@@ -62,15 +64,6 @@ class LoginSerializer(serializers.Serializer):
         else:
             msg = ('Unable to log in with provided credentials.')
             raise exceptions.ValidationError(msg)
-
-        if not user.is_superuser:
-            # If required, is the email verified?
-            if 'rest_auth.registration' in settings.INSTALLED_APPS:
-                from allauth.account import app_settings
-                if app_settings.EMAIL_VERIFICATION == app_settings.EmailVerificationMethod.MANDATORY:
-                    email_address = user.emailaddress_set.get(email=user.email)
-                    if not email_address.verified:
-                        raise serializers.ValidationError('E-mail is not verified.')
 
         attrs['user'] = user
         return attrs
